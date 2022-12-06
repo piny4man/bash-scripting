@@ -28,6 +28,7 @@ function helpPanel(){
   echo -e "\t${purpleColour}i)${endColour}${grayColour} Buscar por dirección IP${endColour}"
   echo -e "\t${purpleColour}d)${endColour}${grayColour} Buscar por la dificultad de una máquina${endColour}"
   echo -e "\t${purpleColour}o)${endColour}${grayColour} Buscar por sistema operativo de la máquina${endColour}"
+  echo -e "\t${purpleColour}s)${endColour}${grayColour} Buscar por skills${endColour}"
   echo -e "\t${purpleColour}y)${endColour}${grayColour} Obtener enlace de la resolución de la máquina${endColour}"
   echo -e "\t${purpleColour}h)${endColour}${grayColour} Mostrar panel de ayuda${endColour}\n"
 }
@@ -123,16 +124,27 @@ function filterMachinesByOs(){
 function filterMachinesByOsAndDifficulty(){
   difficulty="$1"
   os="$2"
-  resultsCheck="$(cat bundle.js | grep "so: \"Linux\"" -C 4 | grep "dificultad: \"Media\"" -B 5 | grep "name:" | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column)"
+  resultsCheck="$(cat bundle.js | grep "so: \"$os\"" -C 4 | grep "dificultad: \"$difficulty\"" -B 5 | grep "name:" | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column)"
   
   if [ "$resultsCheck" ]; then
     echo -e "\n${yellowColour}[+]${endColour}${grayColour} Listando las maquinas que poseen la dificultad ${endColour}${purpleColour}$difficulty${endColour}${grayColour} y el sistema operativo ${endColour}${blueColour}$os${endColour}${grayColour}:${endColour}\n"
-    cat bundle.js | grep "so: \"Linux\"" -C 4 | grep "dificultad: \"Media\"" -B 5 | grep "name:" | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column
+    cat bundle.js | grep "so: \"$os\"" -C 4 | grep "dificultad: \"$difficulty\"" -B 5 | grep "name:" | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column
   else
     echo -e "\n${redColour}[!] La combinacion de dificultad y sistema operativo no existe${endColour}"
   fi
 }
 
+function filterMachinesBySkill(){
+  skill="$1"
+  resultsCheck=$(cat bundle.js | grep "skills: " -B 6 | grep "$skill" -i -B 6 | grep "name:" | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column)
+
+  if [ "$resultsCheck" ]; then
+    echo -e "\n${yellowColour}[+]${endColour}${grayColour} Listando las maquinas que poseen la skill ${endColour}${blueColour}$skill${endColour}${grayColour}:${endColour}\n"
+    cat bundle.js | grep "skills: " -B 6 | grep "$skill" -i -B 6 | grep "name:" | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column
+  else
+    echo -e "\n${redColour}[!] No existen maquinas que necesiten de la skill seleccionada${endColour}"
+  fi
+}
 
 # Indicators
 declare -i parameter_counter=0
@@ -141,7 +153,7 @@ declare -i parameter_counter=0
 declare -i chivato_difficulty=0
 declare -i chivato_os=0
 
-while getopts "m:ui:y:d:o:h" arg; do
+while getopts "m:ui:y:d:o:s:h" arg; do
   case $arg in
     m) machineName="$OPTARG"; let parameter_counter+=1;;
     u) let parameter_counter+=2;;
@@ -149,6 +161,7 @@ while getopts "m:ui:y:d:o:h" arg; do
     y) machineName="$OPTARG"; let parameter_counter+=4;;
     d) difficulty="$OPTARG"; chivato_difficulty=1; let parameter_counter+=5;;
     o) os="$OPTARG"; chivato_os=1; let parameter_counter+=6;;
+    s) skill="$OPTARG"; let parameter_counter=+7;;
     h) ;;
   esac
 done
@@ -167,6 +180,8 @@ elif [ $parameter_counter -eq 6 ]; then
   filterMachinesByOs $os
 elif [ $chivato_difficulty -eq 1 ] && [ $chivato_os -eq 1 ]; then
   filterMachinesByOsAndDifficulty $difficulty $os
+elif [ $parameter_counter -eq 7 ]; then
+  filterMachinesBySkill "$skill"
 else
   helpPanel
 fi
