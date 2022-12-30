@@ -25,8 +25,80 @@ function helpPanel(){
 }
 
 function martingala(){
-  echo -e "\n${yellowColour}[+]${endColour}${grayColour} We are going to play using Martingala's technique${endColour}\n"
+  echo -e "\n${yellowColour}[+]${endColour}${grayColour} Current money:${endColour} ${greenColour}$money$ ${endColour}"
+  echo -ne "${yellowColour}[+]${endColour}${grayColour} How much money do you want to bet?${endColour}${turquoiseColour} -> ${endColour}" && read initialBet
+  echo -ne "${yellowColour}[+]${endColour}${grayColour} What type of bet do you want to do every time ${purpleColour}(${endColour}${yellowColour}odd${endColour}${purpleColour}/${endColour}${yellowColour}even${endColour}${purpleColour})${endColour}?${endColour} -> " && read oddEven
+
+  # echo -e "\n${yellowColour}[+]${endColour}${grayColour} We are going to play with an initial amount of ${greenColour}$initialBet$ ${endColour}on ${purpleColour}$oddEven ${endCoulour} ${endColour}"
+  
+  bet=$initialBet
+  playCounter=1
+  wrongPlays=""
+  maxBenefit=0
+
+  tput civis
+  while true; do
+    money=$(($money-$bet))
+    # echo -e "\n${yellowColour}[+]${endColour}${grayColour} You bet ${greenColour}$bet${endColour}, your current money is ${greenColour}$money$ ${endColour}${endColour}"
+    randomNumber="$(($RANDOM % 37))"
+    # echo -e "\n${yellowColour}[+]${endColour}${grayColour} Current roulette number is ${blueColour}$randomNumber${endColour}${endColour}"
+    
+    if [ "$money" -gt 0 ]; then
+      if [ "$oddEven" == "even" ]; then
+        if [ "$(($randomNumber % 2))" -eq 0 ]; then
+          if [ "$randomNumber" -eq 0 ]; then
+            # echo -e "${redColour}[@]${endColour}${grayColour} The number is ${redColour}0${endColour}, you ${endColour}${redColour}lose ${endColour}${grayColour}:(${endColour}"
+            bet=$(($bet*2)) 
+            wrongPlays+="0 "
+          else
+            # echo -e "${turquoiseColour}[*]${endColour}${grayColour} The number is even, you ${endColour}${turquoiseColour}win${endColour}${grayColour}!${endColour}"
+            reward=$(($bet*2))
+            # echo -e "${purpleColour}[!]${endColour}${grayColour} You win a total of ${endColour}${greenColour}$reward$ ${endColour}"
+            money=$(($money+$reward))
+            # echo -e "${purpleColour}[!]${endColour}${grayColour} You have ${endColour}${greenColour}$money$ ${endColour}"
+            bet=$initialBet
+            wrongPlays=""
+            if [ "$money" -gt "$maxBenefit" ]; then
+              maxBenefit=$money
+            fi
+          fi
+        else
+          # echo -e "${redColour}[@]${endColour}${grayColour} The number is odd, you ${endColour}${redColour}lose ${endColour}${grayColour}:(${endColour}"
+          bet=$(($bet*2)) 
+          wrongPlays+="$randomNumber "
+        fi
+      else
+        if [ "$(($randomNumber % 2))" -eq 1 ]; then
+          # echo -e "${turquoiseColour}[*]${endColour}${grayColour} The number is even, you ${endColour}${turquoiseColour}win${endColour}${grayColour}!${endColour}"
+          reward=$(($bet*2))
+          # echo -e "${purpleColour}[!]${endColour}${grayColour} You win a total of ${endColour}${greenColour}$reward$ ${endColour}"
+          money=$(($money+$reward))
+          # echo -e "${purpleColour}[!]${endColour}${grayColour} You have ${endColour}${greenColour}$money$ ${endColour}"
+          bet=$initialBet
+          wrongPlays=""
+          if [ "$money" -gt "$maxBenefit" ]; then
+            maxBenefit=$money
+          fi
+        else
+          bet=$(($bet*2)) 
+          wrongPlays+="$randomNumber "
+        fi
+      fi
+    else
+      echo -e "\n${redColour}[!] You lose all your money!${endColour}"
+      echo -e "${yellowColour}[!]${endColour}${grayColour} Total plays ${endColour}${turquoiseColour}$playCounter${endColour}"
+      echo -e "${yellowColour}[!]${endColour}${grayColour} Wrong consecutive plays:${endColour}"
+      echo -e "${turquoiseColour}[ $wrongPlays]${endColour}"
+      echo -e "${yellowColour}[!]${endColour}${grayColour} Maximum benefit earned ${greenColour}$maxBenefit$ ${endColour} ${endColour}"
+      tput cnorm; exit 0
+    fi
+
+    let playCounter+=1
+  done
+
+  tput cnorm
 }
+
 
 while getopts "m:t:h" arg; do
   case $arg in
