@@ -118,6 +118,31 @@ function inverseLabrouchere(){
     randomNumber="$(($RANDOM % 37))"
     echo -e "\n${yellowColour}[+]${endColour}${grayColour} Current roulette number is ${blueColour}$randomNumber${endColour}${endColour}"
 
+    if [ "$oddEven" == "even" ]; then
+       if [ "$(($randomNumber % 2))" -eq 0 ]; then
+        if [ "$randomNumber" -eq 0 ]; then
+          # echo -e "${redColour}[@]${endColour}${grayColour} The number is ${redColour}0${endColour}, you ${endColour}${redColour}lose ${endColour}${grayColour}:(${endColour}"
+          bet=$(($bet*2)) 
+          wrongPlays+="0 "
+        else
+          # echo -e "${turquoiseColour}[*]${endColour}${grayColour} The number is even, you ${endColour}${turquoiseColour}win${endColour}${grayColour}!${endColour}"
+          reward=$(($bet*2))
+          # echo -e "${purpleColour}[!]${endColour}${grayColour} You win a total of ${endColour}${greenColour}$reward$ ${endColour}"
+          money=$(($money+$reward))
+          # echo -e "${purpleColour}[!]${endColour}${grayColour} You have ${endColour}${greenColour}$money$ ${endColour}"
+          bet=$initialBet
+          wrongPlays=""
+          if [ "$money" -gt "$maxBenefit" ]; then
+            maxBenefit=$money
+          fi
+        fi
+      else
+        # echo -e "${redColour}[@]${endColour}${grayColour} The number is odd, you ${endColour}${redColour}lose ${endColour}${grayColour}:(${endColour}"
+        bet=$(($bet*2)) 
+        wrongPlays+="$randomNumber "
+      fi
+    fi
+
     sleep 5
   done
 
