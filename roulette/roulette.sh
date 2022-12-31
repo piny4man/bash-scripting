@@ -99,6 +99,30 @@ function martingala(){
   tput cnorm
 }
 
+function inverseLabrouchere(){
+  echo -e "\n${yellowColour}[+]${endColour}${grayColour} Current money:${endColour} ${greenColour}$money$ ${endColour}"
+  echo -ne "${yellowColour}[+]${endColour}${grayColour} What type of bet do you want to do every time ${purpleColour}(${endColour}${yellowColour}odd${endColour}${purpleColour}/${endColour}${yellowColour}even${endColour}${purpleColour})${endColour}?${endColour} -> " && read oddEven
+  
+  declare -a betSequence=(1 2 3 4)
+  echo -e "\n${yellowColour}[+]${endColour}${grayColour} Starting with ${endColour}${blueColour}[${betSequence[@]}]${endColour}${grayColour} sequence${endColour}"
+  
+  bet=$((${betSequence[0]} + ${betSequence[-1]}))
+  unset betSequence[0]
+  unset betSequence[-1]
+  betSequence=(${betSequence[@]})
+
+  echo -e "${yellowColour}[+]${endColour}${grayColour} Bet${endColour}${greenColour} $bet$ ${endColour}${grayColour}and our secuence decrease to ${endColour}${blueColour}[${betSequence[@]}]${endColour}"
+
+  tput civis
+  while true; do
+    randomNumber="$(($RANDOM % 37))"
+    echo -e "\n${yellowColour}[+]${endColour}${grayColour} Current roulette number is ${blueColour}$randomNumber${endColour}${endColour}"
+
+    sleep 5
+  done
+
+  tput cnorm
+}
 
 while getopts "m:t:h" arg; do
   case $arg in
@@ -111,6 +135,8 @@ done
 if [ $money ] && [ $technique ]; then
   if [ "$technique" == "martingala" ]; then
     martingala
+  elif [ "$technique" == "inverseLabrouchere" ]; then
+    inverseLabrouchere
   else
     echo -e "\n${redColour}[!] Specified technique doesn't exist${endColour}"
     helpPanel
