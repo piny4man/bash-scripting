@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Colours
- greenColour="\e[0;32m\033[1m"
+greenColour="\e[0;32m\033[1m"
 redColour="\e[0;31m\033[1m"
 blueColour="\e[0;34m\033[1m"
 yellowColour="\e[0;33m\033[1m"
@@ -109,45 +109,65 @@ function inverseLabrouchere(){
   bet=$((${betSequence[0]} + ${betSequence[-1]}))
   money=$(($money-$bet))
   betSequence=(${betSequence[@]})
+  benefitToRenewSequence=$(($money+50))
+  playCounter=0
 
   tput civis
   while true; do
+    let playCounter+=1
     randomNumber="$(($RANDOM % 37))"
     money=$(($money-$bet))
-    echo -e "\n${yellowColour}[+]${grayColour} Current roulette number is ${blueColour}$randomNumber${endColour}"
-    echo -e "${yellowColour}[+]${grayColour} Your current money is ${greenColour}$money$ ${endColour}"
-    echo -e "${yellowColour}[+]${grayColour} Bet${greenColour} $bet$ ${endColour}"
+    if [ "$money" -gt 0 ]; then
+      echo -e "\n${yellowColour}[+]${grayColour} Current roulette number is ${blueColour}$randomNumber${endColour}"
+      echo -e "${yellowColour}[+]${grayColour} Sequence ${blueColour}[${betSequence[@]}]${endColour}"
+      echo -e "${yellowColour}[+]${grayColour} Bet${greenColour} $bet$ ${endColour}"
+      echo -e "${yellowColour}[+]${grayColour} Your current money is ${greenColour}$money$ ${endColour}"
 
-    if [ "$oddEven" == "even" ]; then
-      if [ "$(($randomNumber % 2))" -eq 0 ] && [ "$randomNumber" -ne 0 ]; then
-        reward=$(($bet*2))
-        let money+=$reward
-        echo -e "${yellowColour}[+]${grayColour} Your current money is ${greenColour}$money$ ${endColour}"
-        betSequence+=($bet)
-        betSequence=(${betSequence[@]})
-        if [ "${#betSequence[@]}" -gt 1 ]; then
-          bet=$((${betSequence[0]} + ${betSequence[-1]}))
-        elif ["${#betSequence[@]}" -eq 1]; then
-          bet=${betSequence[0]}
+      if [ "$oddEven" == "even" ]; then
+        if [ "$(($randomNumber % 2))" -eq 0 ] && [ "$randomNumber" -ne 0 ]; then
+
+          if [ "$money" -gt "$benefitToRenewSequence" ]; then
+            benefitToRenewSequence=$(($benefitToRenewSequence + 50))
+            betSequence=(1 2 3 4)
+            bet=$((${betSequence[0]} + ${betSequence[-1]}))
+          else
+            reward=$(($bet*2))
+            let money+=$reward
+            echo -e "${yellowColour}[+]${grayColour} Your current money is ${greenColour}$money$ ${endColour}"
+            betSequence+=($bet)
+            betSequence=(${betSequence[@]})
+            if [ "${#betSequence[@]}" -gt 1 ]; then
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            elif ["${#betSequence[@]}" -eq 1]; then
+              bet=${betSequence[0]}
+            else
+              betSequence=(1 2 3 4)
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            fi
+          fi
         else
-          betSequence=(1 2 3 4)
-        fi
-      else
-        echo "El numero es impar, pierdes"
-        unset betSequence[0]
-        unset betSequence[-1] 2>/dev/null
-        betSequence=(${betSequence[@]})
-        if [ "${#betSequence[@]}" -gt 1 ]; then
-          bet=$((${betSequence[0]} + ${betSequence[-1]}))
-        elif ["${#betSequence[@]}" -eq 1]; then
-          bet=${betSequence[0]}
-        else
-          betSequence=(1 2 3 4)
+          echo "El numero es impar, pierdes"
+          unset betSequence[0]
+          unset betSequence[-1] 2>/dev/null
+          betSequence=(${betSequence[@]})
+          if [ "${#betSequence[@]}" -gt 1 ]; then
+            bet=$((${betSequence[0]} + ${betSequence[-1]}))
+          elif [ "${#betSequence[@]}" -eq 1 ]; then
+            bet=${betSequence[0]}
+          else
+            betSequence=(1 2 3 4)
+            bet=$((${betSequence[0]} + ${betSequence[-1]}))
+          fi
         fi
       fi
+    else
+      echo -e "\n${redColour}[!] You lose all your money!${endColour}"
+      echo -e "${yellowColour}[!]${grayColour} Total plays ${turquoiseColour}$playCounter${endColour}"
+      # echo -e "${yellowColour}[!]${grayColour} Wrong consecutive plays:${endColour}"
+      # echo -e "${turquoiseColour}[ $wrongPlays]${endColour}"
+      # echo -e "${yellowColour}[!]${grayColour} Maximum benefit earned ${greenColour}$maxBenefit$ ${endColour}"
+      tput cnorm; exit 0
     fi
-
-    sleep 5
   done
 
   tput cnorm
