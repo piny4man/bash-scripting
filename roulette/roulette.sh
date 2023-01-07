@@ -130,20 +130,6 @@ function inverseLabrouchere(){
             benefitToRenewSequence=$(($benefitToRenewSequence + 50))
             betSequence=(1 2 3 4)
             bet=$((${betSequence[0]} + ${betSequence[-1]}))
-          elif [ $money -lt $(($benefitToRenewSequence - 100)) ]; then
-            benefitToRenewSequence=$(($benefitToRenewSequence - 50))
-            reward=$(($bet*2))
-            let money+=$reward
-            betSequence+=($bet)
-            betSequence=(${betSequence[@]})
-            if [ "${#betSequence[@]}" -gt 1 ]; then
-              bet=$((${betSequence[0]} + ${betSequence[-1]}))
-            elif ["${#betSequence[@]}" -eq 1]; then
-              bet=${betSequence[0]}
-            else
-              betSequence=(1 2 3 4)
-              bet=$((${betSequence[0]} + ${betSequence[-1]}))
-            fi
           else
             reward=$(($bet*2))
             let money+=$reward
@@ -159,16 +145,31 @@ function inverseLabrouchere(){
             fi
           fi
         else
-          unset betSequence[0]
-          unset betSequence[-1] 2>/dev/null
-          betSequence=(${betSequence[@]})
-          if [ "${#betSequence[@]}" -gt 1 ]; then
-            bet=$((${betSequence[0]} + ${betSequence[-1]}))
-          elif [ "${#betSequence[@]}" -eq 1 ]; then
-            bet=${betSequence[0]}
+          if [ $money -lt $(($benefitToRenewSequence - 100)) ]; then
+            benefitToRenewSequence=$(($benefitToRenewSequence - 50))
+            unset betSequence[0]
+            unset betSequence[-1] 2>/dev/null
+            betSequence=(${betSequence[@]})
+            if [ "${#betSequence[@]}" -gt 1 ]; then
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            elif ["${#betSequence[@]}" -eq 1]; then
+              bet=${betSequence[0]}
+            else
+              betSequence=(1 2 3 4)
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            fi
           else
-            betSequence=(1 2 3 4)
-            bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            unset betSequence[0]
+            unset betSequence[-1] 2>/dev/null
+            betSequence=(${betSequence[@]})
+            if [ "${#betSequence[@]}" -gt 1 ]; then
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            elif [ "${#betSequence[@]}" -eq 1 ]; then
+              bet=${betSequence[0]}
+            else
+              betSequence=(1 2 3 4)
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            fi
           fi
         fi
       else
@@ -177,20 +178,6 @@ function inverseLabrouchere(){
             benefitToRenewSequence=$(($benefitToRenewSequence + 50))
             betSequence=(1 2 3 4)
             bet=$((${betSequence[0]} + ${betSequence[-1]}))
-          elif [ $money -lt $(($benefitToRenewSequence - 100)) ]; then
-            benefitToRenewSequence=$(($benefitToRenewSequence - 50))
-            reward=$(($bet*2))
-            let money+=$reward
-            betSequence+=($bet)
-            betSequence=(${betSequence[@]})
-            if [ "${#betSequence[@]}" -gt 1 ]; then
-              bet=$((${betSequence[0]} + ${betSequence[-1]}))
-            elif ["${#betSequence[@]}" -eq 1]; then
-              bet=${betSequence[0]}
-            else
-              betSequence=(1 2 3 4)
-              bet=$((${betSequence[0]} + ${betSequence[-1]}))
-            fi
           else
             reward=$(($bet*2))
             let money+=$reward
@@ -206,16 +193,31 @@ function inverseLabrouchere(){
             fi
           fi
         else
-          unset betSequence[0]
-          unset betSequence[-1] 2>/dev/null
-          betSequence=(${betSequence[@]})
-          if [ "${#betSequence[@]}" -gt 1 ]; then
-            bet=$((${betSequence[0]} + ${betSequence[-1]}))
-          elif [ "${#betSequence[@]}" -eq 1 ]; then
-            bet=${betSequence[0]}
+          if [ $money -lt $(($benefitToRenewSequence - 100)) ]; then
+            benefitToRenewSequence=$(($benefitToRenewSequence - 50))
+            unset betSequence[0]
+            unset betSequence[-1] 2>/dev/null
+            betSequence=(${betSequence[@]})
+            if [ "${#betSequence[@]}" -gt 1 ]; then
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            elif ["${#betSequence[@]}" -eq 1]; then
+              bet=${betSequence[0]}
+            else
+              betSequence=(1 2 3 4)
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            fi
           else
-            betSequence=(1 2 3 4)
-            bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            unset betSequence[0]
+            unset betSequence[-1] 2>/dev/null
+            betSequence=(${betSequence[@]})
+            if [ "${#betSequence[@]}" -gt 1 ]; then
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            elif [ "${#betSequence[@]}" -eq 1 ]; then
+              bet=${betSequence[0]}
+            else
+              betSequence=(1 2 3 4)
+              bet=$((${betSequence[0]} + ${betSequence[-1]}))
+            fi
           fi
         fi
       fi
