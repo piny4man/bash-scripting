@@ -29,8 +29,6 @@ function martingala(){
   echo -ne "${yellowColour}[+]${grayColour} How much money do you want to bet?${turquoiseColour} -> ${endColour}" && read initialBet
   echo -ne "${yellowColour}[+]${grayColour} What type of bet do you want to do every time ${purpleColour}(${yellowColour}odd${purpleColour}/${yellowColour}even${purpleColour})?${endColour} -> " && read oddEven
 
-  # echo -e "\n${yellowColour}[+]${endColour}${grayColour} We are going to play with an initial amount of ${greenColour}$initialBet$ ${endColour}on ${purpleColour}$oddEven ${endCoulour} ${endColour}"
-
   bet=$initialBet
   playCounter=1
   wrongPlays=""
@@ -39,23 +37,17 @@ function martingala(){
   tput civis
   while true; do
     money=$(($money-$bet))
-    # echo -e "\n${yellowColour}[+]${endColour}${grayColour} You bet ${greenColour}$bet${endColour}, your current money is ${greenColour}$money$ ${endColour}${endColour}"
     randomNumber="$(($RANDOM % 37))"
-    # echo -e "\n${yellowColour}[+]${endColour}${grayColour} Current roulette number is ${blueColour}$randomNumber${endColour}${endColour}"
 
     if [ "$money" -gt 0 ]; then
       if [ "$oddEven" == "even" ]; then
         if [ "$(($randomNumber % 2))" -eq 0 ]; then
           if [ "$randomNumber" -eq 0 ]; then
-            # echo -e "${redColour}[@]${endColour}${grayColour} The number is ${redColour}0${endColour}, you ${endColour}${redColour}lose ${endColour}${grayColour}:(${endColour}"
             bet=$(($bet*2))
             wrongPlays+="0 "
           else
-            # echo -e "${turquoiseColour}[*]${endColour}${grayColour} The number is even, you ${endColour}${turquoiseColour}win${endColour}${grayColour}!${endColour}"
             reward=$(($bet*2))
-            # echo -e "${purpleColour}[!]${endColour}${grayColour} You win a total of ${endColour}${greenColour}$reward$ ${endColour}"
             money=$(($money+$reward))
-            # echo -e "${purpleColour}[!]${endColour}${grayColour} You have ${endColour}${greenColour}$money$ ${endColour}"
             bet=$initialBet
             wrongPlays=""
             if [ "$money" -gt "$maxBenefit" ]; then
@@ -63,17 +55,13 @@ function martingala(){
             fi
           fi
         else
-          # echo -e "${redColour}[@]${endColour}${grayColour} The number is odd, you ${endColour}${redColour}lose ${endColour}${grayColour}:(${endColour}"
           bet=$(($bet*2))
           wrongPlays+="$randomNumber "
         fi
       else
         if [ "$(($randomNumber % 2))" -eq 1 ]; then
-          # echo -e "${turquoiseColour}[*]${endColour}${grayColour} The number is even, you ${endColour}${turquoiseColour}win${endColour}${grayColour}!${endColour}"
           reward=$(($bet*2))
-          # echo -e "${purpleColour}[!]${endColour}${grayColour} You win a total of ${endColour}${greenColour}$reward$ ${endColour}"
           money=$(($money+$reward))
-          # echo -e "${purpleColour}[!]${endColour}${grayColour} You have ${endColour}${greenColour}$money$ ${endColour}"
           bet=$initialBet
           wrongPlays=""
           if [ "$money" -gt "$maxBenefit" ]; then
